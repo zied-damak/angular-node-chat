@@ -1,0 +1,44 @@
+<div class="mt-5">
+    <h2>Delivery Man : {{ deliveryManName }}</h2>  <!-- Affichez le nom du livreur -->
+    <br><br>
+    <div class="row">
+        <!-- Colonne gauche : liste des pharmacies -->
+        <div class="col-3">
+            <ul class="list-group">
+                <li class="list-group-item"
+                    *ngFor="let pharmacy of pharmacies"
+                    (click)="selectPharmacy(pharmacy)"
+                    [class.active]="selectedPharmacy?.id === pharmacy.id">
+                    <strong>{{ pharmacy.pharmacyName }}</strong>
+                    <span *ngIf="pharmacy.unreadMessageCount > 0" class="badge badge-danger">
+                        {{ pharmacy.unreadMessageCount }}
+                    </span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Colonne droite : fenêtre de chat -->
+        <div class="col-9" *ngIf="selectedPharmacy">
+            <h3>Chat avec {{ selectedPharmacy.pharmacyName }}</h3>
+            <ul class="chat-messages list-group">
+                <li class="list-group-item" *ngFor="let msg of messageList"
+                    [ngClass]="{'sent': msg.senderId === userId, 'received': msg.senderId !== userId}">
+                    <div class="message-content">
+                        <strong *ngIf="msg.senderId === userId">Vous:</strong>
+                        <strong *ngIf="msg.senderId !== userId">{{ selectedPharmacy.pharmacyName }}:</strong>
+                        {{ msg.message }}
+                    </div>
+                    <span class="message-time text-muted small">{{ msg.date | date:'shortTime' }}</span>
+                </li>
+            </ul>
+
+            <!-- Zone d'entrée pour envoyer des messages -->
+            <form (ngSubmit)="sendMessage()">
+                <div class="form-group">
+                    <input [(ngModel)]="message" name="message" class="form-control" placeholder="Tapez votre message" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</div>
